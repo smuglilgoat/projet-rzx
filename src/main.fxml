@@ -2,21 +2,19 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-
-<GridPane alignment="center" hgap="2.0" vgap="2.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<?import javafx.scene.layout.*?>
+<GridPane xmlns:fx="http://javafx.com/fxml/1" alignment="center" hgap="2.0" vgap="2.0"
+          xmlns="http://javafx.com/javafx/11.0.1" fx:controller="Controller">
     <columnConstraints>
-        <ColumnConstraints />
-        <ColumnConstraints />
-        <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
-        <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
+        <ColumnConstraints/>
+        <ColumnConstraints/>
+        <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0"/>
+        <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0"/>
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints vgrow="NEVER" />
-        <RowConstraints />
-        <RowConstraints />
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints/>
+        <RowConstraints/>
         <RowConstraints />
     </rowConstraints>
     <children>
