@@ -4,7 +4,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+public class Login extends Application {
 
     public static void main(String[] args) {
         launch(args);
@@ -12,9 +12,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
-        primaryStage.setTitle("Scaillpe");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        Parent root = FXMLLoader.load(getClass().getResource("Login.fxml"));
+        primaryStage.setTitle("Login");
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
     }
