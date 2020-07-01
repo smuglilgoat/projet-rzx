@@ -20,12 +20,6 @@ public class Server extends Application {
 
     ArrayList<PrintWriter> clientOutputStreams = new ArrayList<>();
     ArrayList<String> users = new ArrayList<>();
-    private javax.swing.JButton b_clear;
-    private javax.swing.JButton b_end;
-    private javax.swing.JButton b_start;
-    private javax.swing.JButton b_users;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea textArea;
 
     @FXML
     private TextArea textArea1;
@@ -85,69 +79,55 @@ public class Server extends Application {
 
     }
 
-    public void addUser(String data) {
-        String message, s = ": :Connect", done = "Server: :Done", name = data;
-        users.add(name); // add everynew user in this array list
-        for (String token : users) // advanced for loop to get each name from the the array
-        {
-            message = (token + s); // message will be his name plus the string connect
+    public void addUser(String user) {
+        String message, s = ": :Connect";
+        users.add(user);
+        for (String u : users) {
+            message = (u + ": :Connect");
             publicMsg(message);
         }
-        publicMsg(done);
+        publicMsg("Server: :Done");
     }
 
-    public void deleteUser(String data) {
+    public void deleteUser(String user) {
         @SuppressWarnings("unused")
-        String message, s = ": :Disconnect", done = "Server: :Done", name = data;
-        // JOptionPane.showMessageDialog(null, "I am here in top of userremove method server");
-        users.remove(name);
-        //clientOutputStreams.remove(getid(data));
-        //  JOptionPane.showMessageDialog(null, "I am here +2 in userremove method server");
-        for (String UserName : users) {
-            message = (UserName + s);
+        String message;
+        users.remove(user);
+        for (String u : users) {
+            message = (u + ": :Disconnect");
             publicMsg(message);
         }
-        //tellEveryone(done);
     }
 
-    public void privateMsg(String msg, int personid, String recievername) {
-
-        if (personid == -1) {
-
-            msg = "The Server ... : The User is Not Found in the online users your message has not been deliverd  :private";
-            personid = users.indexOf(recievername);
+    public void privateMsg(String msg, int targetId, String targetName) {
+        if (targetId == -1) {
+            msg = "[Server]: User Not Found :private";
+            targetId = users.indexOf(targetName);
             try {
-                PrintWriter writer = clientOutputStreams.get(personid);
+                PrintWriter writer = clientOutputStreams.get(targetId);
                 writer.println(msg);
                 writer.flush();
-                textArea.append("Sending to {" + recievername + "} only this msg : Message not sent because the User not found in the online Users \n");
-                textArea.setCaretPosition(textArea.getDocument().getLength());
+                textArea1.appendText("Sending [" + targetName + "]: User Not Found.\n");
             } catch (Exception ex) {
-                textArea.append("Error in telling this to " + recievername + "." + "\n");
+                textArea1.appendText(" Error transferring the msg.\n");
             }
-
         } else {
-
-
-            if (clientOutputStreams.get(personid) != null) {
-
+            if (clientOutputStreams.get(targetId) != null) {
                 try {
-                    PrintWriter writer = clientOutputStreams.get(personid);
+                    PrintWriter writer = clientOutputStreams.get(targetId);
                     writer.println(msg);
                     writer.flush();
-                    textArea.append("Sending to {" + recievername + "} only this msg :  " + msg + "\n");
-                    textArea.setCaretPosition(textArea.getDocument().getLength());
+                    textArea1.appendText("Sending [" + targetName + "]:" + msg + "\n");
                 } catch (Exception ex) {
-                    textArea.append("Error in telling this " + recievername + "." + "\n");
+                    textArea1.appendText(" Error transferring the msg.\n");
                 }
             } else {
-                textArea.append("Error in telling this ... his ID not found OR His outputstream is null " + recievername + "." + "\n");
+                textArea1.appendText(" Error transferring the msg.\n");
             }
         }
     }
 
     public void publicMsg(String message) {
-        @SuppressWarnings("rawtypes")
         Iterator it = clientOutputStreams.iterator();
 
         while (it.hasNext()) {
@@ -155,10 +135,8 @@ public class Server extends Application {
                 PrintWriter writer = (PrintWriter) it.next();
                 writer.println(message);
                 writer.flush();
-                textArea.setCaretPosition(textArea.getDocument().getLength());
-
             } catch (Exception ex) {
-                textArea.append("Error telling everyone. \n");
+                textArea1.appendText(" Error transferring the msg.\n");
             }
         }
     }
@@ -191,7 +169,7 @@ public class Server extends Application {
 
                     textArea1.appendText(" Received: " + message + "\n");
                     data = message.split(":");
-                    int recieverID;
+                    int targetId;
 
                     switch (data[2]) {
                         case "Connect":
@@ -207,24 +185,24 @@ public class Server extends Application {
                             publicMsg(message);
                             break;
                         case "private":
-                            recieverID = users.indexOf(data[3]);
-                            if (recieverID != -1) {
-                                privateMsg(message, recieverID, data[3]);
+                            targetId = users.indexOf(data[3]);
+                            if (targetId != -1) {
+                                privateMsg(message, targetId, data[3]);
                             } else {
-                                privateMsg(message, recieverID, data[0]);
+                                privateMsg(message, targetId, data[0]);
                             }
                             break;
                         case "request":
                             StringBuilder stringBuilder = new StringBuilder();
                             for (String u : users) {
-                                recieverID = users.indexOf(u);
-                                stringBuilder.append(u).append(", ID = ").append(recieverID);
+                                targetId = users.indexOf(u);
+                                stringBuilder.append(u).append(", ID = ").append(targetId);
                                 stringBuilder.append(".   ");
                             }
-                            recieverID = users.indexOf(data[0]);
+                            targetId = users.indexOf(data[0]);
                             String finalString = stringBuilder.toString();
                             finalString = data[0] + ":" + finalString + ":" + "request";
-                            privateMsg(finalString, recieverID, data[0]);
+                            privateMsg(finalString, targetId, data[0]);
                             break;
                         default:
                             textArea1.appendText(" Can't identify request type");
