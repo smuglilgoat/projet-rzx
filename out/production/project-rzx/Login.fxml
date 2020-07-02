@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Login">
    <children>
       <Pane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #203a46;">
          <children>
             <Line endX="500.0" layoutX="100.0" layoutY="300.0" rotate="90.0" startX="100.0" style="-fx-stroke: #f2f2f2;" />
-            <TextField layoutX="500.0" layoutY="140.0" prefHeight="40.0" prefWidth="200.0" promptText="User Name" style="-fx-background-color: #203a46; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;">
+            <TextField layoutX="500.0" layoutY="140.0" prefHeight="40.0" prefWidth="200.0" promptText="Karim" style="-fx-background-color: #203a46; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;">
                <font>
                   <Font name="Microsoft Sans Serif" size="14.0" />
                </font>
             </TextField>
-            <TextField layoutX="500.0" layoutY="230.0" prefHeight="40.0" prefWidth="200.0" promptText="IP Adress" style="-fx-background-color: #203a46; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;">
+            <TextField layoutX="500.0" layoutY="230.0" prefHeight="40.0" prefWidth="200.0" promptText="192.186.0.0" style="-fx-background-color: #203a46; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;">
                <font>
                   <Font name="Microsoft Sans Serif" size="14.0" />
                </font>
             </TextField>
-            <TextField layoutX="500.0" layoutY="320.0" prefHeight="40.0" prefWidth="200.0" promptText="Port" style="-fx-background-color: #203a46; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;">
+            <TextField layoutX="500.0" layoutY="320.0" prefHeight="40.0" prefWidth="200.0" promptText="1600" style="-fx-background-color: #203a46; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;">
                <font>
                   <Font name="Microsoft Sans Serif" size="14.0" />
                </font>
@@ -33,12 +34,47 @@
             </Button>
             <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="90.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@support.png" />
+                  <Image url="@images/support.png" />
                </image>
             </ImageView>
             <Label layoutX="195.0" layoutY="270.0" text="XenoTalk" textFill="#f2f2f2">
                <font>
                   <Font name="Century Gothic" size="35.0" />
+               </font>
+            </Label>
+            <HBox fx:id="HboxMenu" fillHeight="false" layoutX="686.0" layoutY="6.0" prefHeight="40.0" prefWidth="108.0" style="-fx-background-color: #203a46;">
+               <children>
+                  <ImageView fx:id="miniButton" fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets left="10.0" top="10.0" />
+                     </HBox.margin>
+                     <image>
+                        <Image url="@images/output-onlinepngtools.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="closeButton" fitHeight="20.0" fitWidth="22.0" onMouseClicked="#closeWindow" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets left="50.0" top="8.0" />
+                     </HBox.margin>
+                     <image>
+                        <Image url="@images/icons8-delete-24%20(3).png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <Label layoutX="500.0" layoutY="120.0" text="User Name" textFill="#f2f2f2">
+               <font>
+                  <Font name="Century Gothic" size="16.0" />
+               </font>
+            </Label>
+            <Label layoutX="500.0" layoutY="210.0" text="IP Adress" textFill="#f2f2f2">
+               <font>
+                  <Font name="Century Gothic" size="16.0" />
+               </font>
+            </Label>
+            <Label layoutX="500.0" layoutY="300.0" text="Port" textFill="#f2f2f2">
+               <font>
+                  <Font name="Century Gothic" size="16.0" />
                </font>
             </Label>
          </children>
