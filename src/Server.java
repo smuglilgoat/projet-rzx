@@ -80,13 +80,12 @@ public class Server extends Application {
     }
 
     public void addUser(String user) {
-        String message, s = ": :Connect";
+        String message;
         users.add(user);
         for (String u : users) {
             message = (u + ": :Connect");
             publicMsg(message);
         }
-        publicMsg("Server: :Done");
     }
 
     public void deleteUser(String user) {
@@ -101,7 +100,7 @@ public class Server extends Application {
 
     public void privateMsg(String msg, int targetId, String targetName) {
         if (targetId == -1) {
-            msg = "[Server]: User Not Found :private";
+            msg = "[Server]: User Not Found :Private";
             targetId = users.indexOf(targetName);
             try {
                 PrintWriter writer = clientOutputStreams.get(targetId);
@@ -166,14 +165,12 @@ public class Server extends Application {
 
             try {
                 while ((message = reader.readLine()) != null) {
-
-                    textArea1.appendText(" Received: " + message + "\n");
                     data = message.split(":");
+                    textArea1.appendText(" Received: {" + data[2] + "}" + "\t[" + data[0] + "]" + "\t" + data[1] + "\n");
                     int targetId;
 
                     switch (data[2]) {
                         case "Connect":
-                            publicMsg((data[0] + ":" + data[1] + ":Chat"));
                             addUser(data[0]);
                             break;
                         case "Disconnect":
@@ -184,7 +181,7 @@ public class Server extends Application {
                         case "Chat":
                             publicMsg(message);
                             break;
-                        case "private":
+                        case "Private":
                             targetId = users.indexOf(data[3]);
                             if (targetId != -1) {
                                 privateMsg(message, targetId, data[3]);
@@ -192,17 +189,15 @@ public class Server extends Application {
                                 privateMsg(message, targetId, data[0]);
                             }
                             break;
-                        case "request":
+                        case "Request":
                             StringBuilder stringBuilder = new StringBuilder();
                             for (String u : users) {
                                 targetId = users.indexOf(u);
                                 stringBuilder.append(u).append(", ID = ").append(targetId);
                                 stringBuilder.append(".   ");
                             }
-                            targetId = users.indexOf(data[0]);
-                            String finalString = stringBuilder.toString();
-                            finalString = data[0] + ":" + finalString + ":" + "request";
-                            privateMsg(finalString, targetId, data[0]);
+                            String finalString = data[0] + ":" + stringBuilder.toString() + ":" + "Request";
+                            privateMsg(finalString, users.indexOf(data[0]), data[0]);
                             break;
                         default:
                             textArea1.appendText(" Can't identify request type");
