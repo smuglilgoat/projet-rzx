@@ -20,8 +20,9 @@ public class Login extends Application {
     private double xOffset = 0;
     private double yOffset = 0;
 
-    public void closeWindow(){
+    public void closeWindow() {
         System.exit(0);
+    }
     @FXML
     private TextField userNameField;
 
