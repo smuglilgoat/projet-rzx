@@ -18,9 +18,11 @@ public class Login extends Application {
     private double yOffset = 0;
     @FXML
     private ImageView miniButton;
+    @FXML
+    private ImageView closeButton;
 
     public void closeWindow() {
-        Stage stage = (Stage) miniButton.getScene().getWindow();
+        Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
 
