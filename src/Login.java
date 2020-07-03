@@ -3,26 +3,31 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
-
 import java.io.IOException;
 
 public class Login extends Application {
     private double xOffset = 0;
     private double yOffset = 0;
+    @FXML
+    private ImageView miniButton;
 
     public void closeWindow() {
-        System.exit(0);
+        Stage stage = (Stage) miniButton.getScene().getWindow();
+        stage.close();
     }
+
+    public  void minimizeWindow(){
+        Stage stage = (Stage) miniButton.getScene().getWindow();
+        stage.setIconified(true);
+    }
+
     @FXML
     private TextField userNameField;
 

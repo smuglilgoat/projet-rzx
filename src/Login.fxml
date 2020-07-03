@@ -44,7 +44,7 @@
             </Label>
             <HBox fillHeight="false" layoutX="686.0" layoutY="6.0" prefHeight="40.0" prefWidth="108.0" style="-fx-background-color: #203a46;">
                <children>
-                  <ImageView fx:id="miniButton" fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="miniButton" onMouseClicked="#minimizeWindow" fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <HBox.margin>
                         <Insets left="10.0" top="10.0" />
                      </HBox.margin>
