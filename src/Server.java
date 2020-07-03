@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class Server extends Application {
@@ -37,8 +38,8 @@ public class Server extends Application {
     @FXML
     void onButtonClose(ActionEvent event) {
         try {
-            publicMsg("[Server] Closing Server. All users will be disconnected");
-            textArea1.appendText("Closing the Server in 5 sec...\n");
+            publicMsg("[Server]:[Server] Closing Server. All users will be disconnected:Chat");
+            textArea1.appendText("[Server] Closing the Server in 5 sec...\n");
             Thread.sleep(1000);
             System.exit(0);
         } catch (InterruptedException ex) {
@@ -50,8 +51,8 @@ public class Server extends Application {
     void onButtonStart(ActionEvent event) {
         Thread starter = new Thread(new ServerStart());
         starter.start();
-        textArea1.appendText(" Server has been started\n");
-        textArea1.appendText(" Waiting for connection...\n");
+        textArea1.appendText("[Server] Server has been started\n");
+        textArea1.appendText("[Server] Waiting for connection...\n");
 
         buttonStart.setDisable(true);
         buttonClose.setDisable(false);
@@ -60,82 +61,76 @@ public class Server extends Application {
 
     @FXML
     void onButtonUsers(ActionEvent event) {
-        textArea1.appendText(" Printing Online Users List:\n");
+        textArea1.appendText("[Server] Printing Online Users List:\n");
         if (!users.isEmpty()) {
             for (String u : users) {
-                textArea1.appendText(" " + u + ", ID = " + users.indexOf(u) + "\n");
+                textArea1.appendText("[Server] " + u + ", ID = " + users.indexOf(u) + "\n");
             }
         } else {
-            textArea1.appendText(" 0 User Online...\n");
+            textArea1.appendText("[Server] 0 User Online...\n");
         }
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("server.fxml"));
-        primaryStage.setTitle("Scaillpe - Server Dashboard");
+        primaryStage.setTitle("XenoTalk - Server Dashboard");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
     }
 
     public void addUser(String user) {
-        String message;
         users.add(user);
-        for (String u : users) {
-            message = (u + ": :Connect");
-            publicMsg(message);
-        }
+        publicMsg(user + ": :Connect");
+        textArea1.appendText("[Server] User {" + user + "} joined the chatroom.\n");
     }
 
     public void deleteUser(String user) {
-        @SuppressWarnings("unused")
-        String message;
+        clientOutputStreams.get(users.indexOf(user)).close();
+        clientOutputStreams.remove(users.indexOf(user));
         users.remove(user);
-        for (String u : users) {
-            message = (u + ": :Disconnect");
-            publicMsg(message);
-        }
+        publicMsg(user + ": :Disconnect");
+        textArea1.appendText("[Server] User {" + user + "} left the chatroom.\n");
     }
 
-    public void privateMsg(String msg, int targetId, String targetName) {
-        if (targetId == -1) {
-            msg = "[Server]: User Not Found :Private";
-            targetId = users.indexOf(targetName);
+    public void privateMsg(String msg, String targetName, String senderName) {
+        if (!users.contains(targetName)) {
+            msg = "[Server]: User {" + targetName + "} Not Found :Private:" + senderName;
+            int senderId = users.indexOf(senderName);
             try {
-                PrintWriter writer = clientOutputStreams.get(targetId);
+                PrintWriter writer = clientOutputStreams.get(senderId);
                 writer.println(msg);
                 writer.flush();
-                textArea1.appendText("Sending [" + targetName + "]: User Not Found.\n");
+                textArea1.appendText("[Server] Sending {" + senderName + "}: User Not Found.\n");
             } catch (Exception ex) {
-                textArea1.appendText(" Error transferring the msg.\n");
+                textArea1.appendText("[Server] Error transferring the msg: UserNotFound\n");
+            }
+        } else if (clientOutputStreams.get(users.indexOf(targetName)) != null) {
+            try {
+                PrintWriter writer = clientOutputStreams.get(users.indexOf(targetName));
+                writer.println(msg);
+                writer.flush();
+                textArea1.appendText("[Server] Sending {" + targetName + "}: " + msg + "\n");
+            } catch (Exception ex) {
+                textArea1.appendText("[Server] Error transferring the msg: CouldNotTransmit\n");
             }
         } else {
-            if (clientOutputStreams.get(targetId) != null) {
-                try {
-                    PrintWriter writer = clientOutputStreams.get(targetId);
-                    writer.println(msg);
-                    writer.flush();
-                    textArea1.appendText("Sending [" + targetName + "]:" + msg + "\n");
-                } catch (Exception ex) {
-                    textArea1.appendText(" Error transferring the msg.\n");
-                }
-            } else {
-                textArea1.appendText(" Error transferring the msg.\n");
-            }
+            textArea1.appendText("[Server] Error transferring the msg: StreamNotFound\n");
         }
     }
 
-    public void publicMsg(String message) {
+
+    public void publicMsg(String msg) {
         Iterator it = clientOutputStreams.iterator();
 
         while (it.hasNext()) {
             try {
                 PrintWriter writer = (PrintWriter) it.next();
-                writer.println(message);
+                writer.println(msg);
                 writer.flush();
             } catch (Exception ex) {
-                textArea1.appendText(" Error transferring the msg.\n");
+                textArea1.appendText("[Server] Error transferring the msg: PublicTransitionError\n");
             }
         }
     }
@@ -152,7 +147,8 @@ public class Server extends Application {
                 InputStreamReader isReader = new InputStreamReader(socket.getInputStream());
                 reader = new BufferedReader(isReader);
             } catch (Exception ex) {
-                textArea1.appendText(" Unexpected Error. Check console for more info...\n");
+                textArea1.appendText("[Server] Unexpected Error: InputStreamNotInitialised\n");
+                textArea1.appendText("[Server] Check console for more info...\n");
                 System.out.println(ex.toString());
             }
 
@@ -160,34 +156,27 @@ public class Server extends Application {
 
         @Override
         public void run() {
-            String message;
-            String[] data;
+            String msg;
+            String[] packet;
 
             try {
-                while ((message = reader.readLine()) != null) {
-                    data = message.split(":");
-                    textArea1.appendText(" Received: {" + data[2] + "}" + "\t[" + data[0] + "]" + "\t" + data[1] + "\n");
+                while ((msg = reader.readLine()) != null) {
+                    packet = msg.split(":");
+                    textArea1.appendText("[" + packet[0] + "] " + "{" + packet[2] + "} " + packet[1] + "\n");
                     int targetId;
 
-                    switch (data[2]) {
+                    switch (packet[2]) {
                         case "Connect":
-                            addUser(data[0]);
+                            addUser(packet[0]);
                             break;
                         case "Disconnect":
-                            publicMsg((data[0] + "  has :Disconnected" + ":Chat"));
-                            clientOutputStreams.remove(users.indexOf(data[0]));
-                            deleteUser(data[0]);
+                            deleteUser(packet[0]);
                             break;
                         case "Chat":
-                            publicMsg(message);
+                            publicMsg(msg);
                             break;
                         case "Private":
-                            targetId = users.indexOf(data[3]);
-                            if (targetId != -1) {
-                                privateMsg(message, targetId, data[3]);
-                            } else {
-                                privateMsg(message, targetId, data[0]);
-                            }
+                            privateMsg(msg, packet[3], packet[0]);
                             break;
                         case "Request":
                             StringBuilder stringBuilder = new StringBuilder();
@@ -196,16 +185,17 @@ public class Server extends Application {
                                 stringBuilder.append(u).append(", ID = ").append(targetId);
                                 stringBuilder.append(".   ");
                             }
-                            String finalString = data[0] + ":" + stringBuilder.toString() + ":" + "Request";
-                            privateMsg(finalString, users.indexOf(data[0]), data[0]);
+                            String finalString = packet[0] + ":" + stringBuilder.toString() + ":" + "Request";
+                            privateMsg(finalString, packet[0], packet[0]);
                             break;
                         default:
-                            textArea1.appendText(" Can't identify request type");
+                            textArea1.appendText("[Server] Decoding Error: UnknownRequestType");
+                            System.out.println(Arrays.toString(packet));
                             break;
                     }
                 }
             } catch (Exception ex) {
-                textArea1.appendText("Connection Lost.\n");
+                textArea1.appendText("[Server] Connection Error: HostClientLost\n");
             }
         }
     }
@@ -218,8 +208,8 @@ public class Server extends Application {
                 @SuppressWarnings("resource")
                 ServerSocket serverSock = new ServerSocket(6000);
 
-                textArea1.appendText(" IP: " + serverSock.getLocalSocketAddress().toString() + "\n");
-                textArea1.appendText(" Port : " + serverSock.getLocalPort() + "\n");
+                textArea1.appendText("[Server] IP: " + serverSock.getLocalSocketAddress().toString() + "\n");
+                textArea1.appendText("[Server] Port : " + serverSock.getLocalPort() + "\n");
 
                 while (true) {
                     Socket clientSock = serverSock.accept();
@@ -228,11 +218,12 @@ public class Server extends Application {
                     clientOutputStreams.add(writer);
                     Thread listener = new Thread(new Handler(clientSock, writer));
                     listener.start();
-                    textArea1.appendText(" New User Connected\n");
+                    textArea1.appendText("[Server] New Stream Detected\n");
                 }
 
             } catch (Exception ex) {
-                textArea1.appendText(" Error making a connection. Check console for more info...\n");
+                textArea1.appendText("[Server] Connection Error: CouldNotInitialise\n");
+                textArea1.appendText("[Server] Check console for more info...\n");
                 System.out.println(ex.toString());
             }
         }

@@ -68,15 +68,14 @@ public class Chat extends Application {
         try {
             writer.println(loginCreds[0] + ": :Disconnect");
             writer.flush();
-            chatArea.appendText("Disconnected.\n");
         } catch (Exception ex) {
-            chatArea.appendText("Failed to disconnect.\n");
+            chatArea.appendText("[Client] Failed to disconnect.\n");
         }
         ((Stage) chatArea.getScene().getWindow()).close();
-        incomingReader.interrupt();
         reader.close();
         writer.close();
         socket.close();
+        incomingReader.interrupt();
     }
 
     public void initConnection() {
@@ -85,10 +84,10 @@ public class Chat extends Application {
             InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
             reader = new BufferedReader(inputStreamReader);
             writer = new PrintWriter(socket.getOutputStream());
-            writer.println(loginCreds[0] + ": has connected :Connect");
+            writer.println(loginCreds[0] + ": :Connect");
             writer.flush();
         } catch (Exception ex) {
-            chatArea.appendText("Could not Connect ! Try Again\n");
+            chatArea.appendText("[Client] Could not Connect, Check info and Try Again\n");
             System.out.println(ex.toString());
         }
 
@@ -116,14 +115,14 @@ public class Chat extends Application {
                 writer.flush();
                 chatArea.appendText("[Private] : {" + data[2] + "} to " + data[1] + "\n");
             } catch (Exception ex) {
-                chatArea.appendText("Message was not sent.\n" + "Could not find user");
+                chatArea.appendText("[Client] Message was not sent: UserNotFound\n");
             }
         } else {
             try {
                 writer.println(loginCreds[0] + ":" + msgField.getText() + ":" + "Chat");
                 writer.flush();
             } catch (Exception ex) {
-                chatArea.appendText("Message was not sent.\n");
+                chatArea.appendText("[Client] Unknown Error: MsgNotSent.\n");
             }
         }
 
@@ -144,35 +143,36 @@ public class Chat extends Application {
 
         @Override
         public void run() {
-            String[] data;
+            String[] packet;
             String stream;
 
             try {
                 while ((stream = reader.readLine()) != null) {
-                    data = stream.split(":");
+                    packet = stream.split(":");
 
-                    switch (data[2]) {
+                    switch (packet[2]) {
                         case "Connect":
-                            chatArea.appendText("[" + data[0] + "] Joined the Chatroom\n");
-                            users.add(data[0]);
+                            chatArea.appendText("[" + packet[0] + "] Joined the Chatroom\n");
+                            users.add(packet[0]);
                             playSound("E:\\Documents\\Code\\project-rzx\\src\\soundFiles\\Online_tone.wav");
                             break;
                         case "Disconnect":
-                            users.remove(data[0]);
+                            chatArea.appendText("[" + packet[0] + "] Left the Chatroom\n");
+                            users.remove(packet[0]);
                             break;
                         case "Chat":
-                            chatArea.appendText(data[0] + ": " + data[1] + "\n");
+                            chatArea.appendText(packet[0] + ": " + packet[1] + "\n");
                             break;
                         case "Private":
-                            chatArea.appendText("[Private] {" + data[0] + "}: " + data[1] + "\n");
+                            chatArea.appendText("[Private] {" + packet[0] + "}: " + packet[1] + "\n");
                             playSound("E:\\Documents\\Code\\project-rzx\\src\\soundFiles\\PrivMsg_tone.wav");
                             break;
                         case "Request":
-                            chatArea.appendText("[Server]: " + "\n" + data[1] + "\n");
+                            chatArea.appendText("[Server]: " + "\n" + packet[1] + "\n");
                             break;
                         default:
-                            chatArea.appendText("Can't identify request type\n");
-                            System.out.println(Arrays.toString(data));
+                            chatArea.appendText("[Client] Decoding Error: UnknownRequestType\n");
+                            System.out.println(Arrays.toString(packet));
                             break;
                     }
                 }
