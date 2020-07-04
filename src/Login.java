@@ -63,6 +63,23 @@ public class Login extends Application {
             }
         });
 
+        chatStage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            }
+        });
+
+        chatStage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                chatStage.setX(event.getScreenX() - xOffset);
+                chatStage.setY(event.getScreenY() - yOffset);
+            }
+        });
+
+        chatStage.initStyle(StageStyle.UNDECORATED);
         chatStage.show();
     }
 

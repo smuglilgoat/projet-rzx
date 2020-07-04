@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Chat">
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="600.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.1"
+            fx:controller="Chat">
    <children>
       <Pane prefHeight="38.0" prefWidth="1024.0" style="-fx-background-color: #202020;">
          <children>
             <HBox layoutX="910.0" prefHeight="40.0" prefWidth="108.0" style="-fx-background-color: #202020;">
                <children>
-                  <ImageView fx:id="miniButton" fitHeight="15.0" fitWidth="20.0" onMouseClicked="#minimizeWindow" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="miniButton" fitHeight="15.0" fitWidth="20.0" onMouseClicked="#minimizeWindow"
+                             pickOnBounds="true" preserveRatio="true">
                      <HBox.margin>
-                        <Insets left="10.0" top="10.0" />
+                        <Insets left="10.0" top="10.0"/>
                      </HBox.margin>
                      <image>
                         <Image url="@images/output-onlinepngtools.png" />
@@ -54,45 +56,65 @@
                   <Image url="@images/support.png" />
                </image>
             </ImageView>
-            <Label layoutX="85.0" layoutY="134.0" prefHeight="29.0" prefWidth="88.0" text="Hmiyazaki" textFill="#f2f2f2">
+            <Label fx:id="usernameLabel" layoutX="85.0" layoutY="134.0" prefHeight="29.0" prefWidth="88.0"
+                   textFill="#f2f2f2">
                <font>
-                  <Font name="Century Gothic" size="16.0" />
+                  <Font name="Century Gothic" size="16.0"/>
                </font>
             </Label>
             <Circle fill="#4ac274eb" layoutX="74.0" layoutY="150.0" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
+            <JFXListView fx:id="userList" editable="true" layoutX="25.0" layoutY="166.0" onMouseClicked="#onUserPrivate"
+                         prefHeight="368.0" prefWidth="200.0" style="-fx-background-color: #34373C;"/>
          </children>
       </AnchorPane>
       <AnchorPane layoutX="250.0" layoutY="38.0" prefHeight="562.0" prefWidth="774.0" style="-fx-background-color: #2E2E2E;">
          <children>
             <AnchorPane layoutY="496.0" prefHeight="66.0" prefWidth="774.0">
                <children>
-                  <JFXTextField fx:id="msgField" focusColor="#34373c" layoutX="91.0" layoutY="5.0" onKeyPressed="#onKeyEnter" prefHeight="38.0" prefWidth="607.0" style="-fx-background-color: #34373C; -fx-text-fill: #f2f2f2;">
+                  <JFXTextField fx:id="msgField" focusColor="#34373c" layoutX="74.0" layoutY="8.0"
+                                onKeyPressed="#onKeyEnter" prefHeight="38.0" prefWidth="629.0"
+                                style="-fx-background-color: #34373C; -fx-text-fill: #f2f2f2;">
                      <font>
-                        <Font name="Microsoft Sans Serif" size="14.0" />
+                        <Font name="Microsoft Sans Serif" size="14.0"/>
                      </font>
                      <padding>
-                        <Insets left="2.0" />
+                        <Insets left="2.0"/>
                      </padding>
                   </JFXTextField>
-                  <ImageView fitHeight="48.0" fitWidth="48.0" layoutX="630.0" layoutY="-61.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fitHeight="30.0" fitWidth="28.0" layoutX="710.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/icons8-email-send-32.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="32.0" fitWidth="32.0" layoutX="48.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/icons8-add-file-32.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fitHeight="48.0" fitWidth="48.0" layoutX="630.0" layoutY="-61.0" pickOnBounds="true"
+                             preserveRatio="true"/>
+                  <JFXButton fx:id="sendButton" buttonType="RAISED" layoutX="712.0" layoutY="8.0"
+                             onMouseClicked="#onSendButton" prefHeight="40.0" prefWidth="48.0" ripplerFill="WHITE"
+                             text=" " textFill="WHITE">
+                     <graphic>
+                        <ImageView fitHeight="28.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/icons8-email-send-32.png"/>
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </JFXButton>
+                  <JFXButton fx:id="uploadButton" buttonType="RAISED" layoutX="14.0" layoutY="8.0"
+                             onMouseClicked="#onUploadButton" text=" " textFill="WHITE">
+                     <graphic>
+                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/icons8-add-file-32.png"/>
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </JFXButton>
                </children>
             </AnchorPane>
-            <JFXScrollPane layoutX="50.0" layoutY="12.0" prefHeight="476.0" prefWidth="684.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="10.0">
+            <JFXScrollPane layoutX="11.0" layoutY="12.0" prefHeight="476.0" prefWidth="752.0"
+                           AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="10.0">
                <children>
-                  <JFXTextArea fx:id="chatArea" prefHeight="476.0" prefWidth="672.0" style="-fx-background-color: #34373C; -fx-text-fill: #f2f2f2;">
+                  <JFXTextArea fx:id="chatArea" prefHeight="476.0" prefWidth="672.0"
+                               style="-fx-background-color: #34373C; -fx-text-fill: #f2f2f2;">
                      <font>
-                        <Font name="Microsoft Sans Serif" size="12.0" />
-                     </font></JFXTextArea>
+                        <Font name="Microsoft Sans Serif" size="12.0"/>
+                     </font>
+                  </JFXTextArea>
                </children>
             </JFXScrollPane>
          </children>

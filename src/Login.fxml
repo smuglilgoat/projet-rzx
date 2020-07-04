@@ -1,30 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.*?>
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Login">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1"
+            fx:controller="Login">
    <children>
       <Pane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #202020;">
          <children>
-            <Line endX="500.0" layoutX="100.0" layoutY="300.0" rotate="90.0" startX="100.0" style="-fx-stroke: #f2f2f2;" />
-            <TextField fx:id="userNameField" layoutX="500.0" layoutY="140.0" prefHeight="40.0" prefWidth="200.0" promptText="Karim" style="-fx-background-color: #202020; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;">
+            <Line endX="500.0" layoutX="100.0" layoutY="300.0" rotate="90.0" startX="100.0"
+                  style="-fx-stroke: #f2f2f2;"/>
+            <TextField fx:id="userNameField" layoutX="500.0" layoutY="140.0" prefHeight="40.0" prefWidth="200.0"
+                       promptText="Karim"
+                       style="-fx-background-color: #202020; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;">
                <font>
-                  <Font name="Microsoft Sans Serif" size="14.0" />
+                  <Font name="Microsoft Sans Serif" size="14.0"/>
                </font>
             </TextField>
-            <TextField fx:id="ipAdressField" layoutX="500.0" layoutY="230.0" prefHeight="40.0" prefWidth="200.0" promptText="192.186.0.0" style="-fx-background-color: #202020; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;">
+            <TextField fx:id="ipAdressField" layoutX="500.0" layoutY="230.0" prefHeight="40.0" prefWidth="200.0"
+                       promptText="192.186.0.0"
+                       style="-fx-background-color: #202020; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;"
+                       text="localhost">
                <font>
-                  <Font name="Microsoft Sans Serif" size="14.0" />
+                  <Font name="Microsoft Sans Serif" size="14.0"/>
                </font>
             </TextField>
-            <TextField fx:id="portField" layoutX="500.0" layoutY="320.0" prefHeight="40.0" prefWidth="200.0" promptText="1600" style="-fx-background-color: #202020 #202020; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;">
+            <TextField fx:id="portField" layoutX="500.0" layoutY="320.0" prefHeight="40.0" prefWidth="200.0"
+                       promptText="1600"
+                       style="-fx-background-color: #202020 #202020; -fx-text-fill: #f2f2f2; -fx-border-color: #C5C5CF;"
+                       text="6000">
                <font>
-                  <Font name="Microsoft Sans Serif" size="14.0" />
+                  <Font name="Microsoft Sans Serif" size="14.0"/>
                </font>
             </TextField>
             <Button fx:id="connectButton" layoutX="500.0" layoutY="410.0" mnemonicParsing="false" onAction="#onButtonConnect" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #4ac274;" text="Connect" textFill="#f2f2f2">

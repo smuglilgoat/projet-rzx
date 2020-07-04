@@ -8,9 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -38,7 +36,7 @@ public class Server extends Application {
     @FXML
     void onButtonClose(ActionEvent event) {
         try {
-            publicMsg("[Server]:[Server] Closing Server. All users will be disconnected:Chat");
+            publicMsg("[Server]: Closing Server. All users will be disconnected:Chat");
             textArea1.appendText("[Server] Closing the Server in 5 sec...\n");
             Thread.sleep(1000);
             System.exit(0);
@@ -163,7 +161,6 @@ public class Server extends Application {
                 while ((msg = reader.readLine()) != null) {
                     packet = msg.split(":");
                     textArea1.appendText("[" + packet[0] + "] " + "{" + packet[2] + "} " + packet[1] + "\n");
-                    int targetId;
 
                     switch (packet[2]) {
                         case "Connect":
@@ -181,12 +178,30 @@ public class Server extends Application {
                         case "Request":
                             StringBuilder stringBuilder = new StringBuilder();
                             for (String u : users) {
-                                targetId = users.indexOf(u);
-                                stringBuilder.append(u).append(", ID = ").append(targetId);
-                                stringBuilder.append(".   ");
+                                stringBuilder.append(u).append("/");
                             }
                             String finalString = packet[0] + ":" + stringBuilder.toString() + ":" + "Request";
                             privateMsg(finalString, packet[0], packet[0]);
+                            break;
+                        case "File":
+                            String fileName = packet[1];
+                            textArea1.appendText("[Server] Downloading file : " + fileName + " from {" + packet[0] + "}\n");
+
+                            int m;
+                            File directory = new File("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx");
+                            int size = 9022386;
+                            byte[] data = new byte[size];
+                            File fc = new File(directory, fileName);
+                            FileOutputStream fileOut = new FileOutputStream(fc);
+                            DataOutputStream dataOut = new DataOutputStream(fileOut);
+
+                            m = socket.getInputStream().read(data, 0, data.length);
+                            dataOut.write(data, 0, m);
+                            dataOut.flush();
+                            textArea1.appendText("[Server] Downloading Complete\n");
+
+                            fileOut.close();
+                            dataOut.close();
                             break;
                         default:
                             textArea1.appendText("[Server] Decoding Error: UnknownRequestType");
