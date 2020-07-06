@@ -203,7 +203,6 @@ public class Server extends Application {
                                     //No of bytes read in one read() call
                                     int bytesRead = 0;
 
-
                                     do {
                                         bytesRead = is.read(contents);
                                         textArea1.appendText("[Server] Read " + bytesRead + " bytes\n");
@@ -232,26 +231,25 @@ public class Server extends Application {
                                     privateMsg(finalString, packet[0], packet[0]);
                                     break;
                                 case "Download":
-                                    textArea1.appendText("[Server] Uploading File: " + packet[1] + ", to " + packet[0] + "\n");
-
                                     //Specify the file
                                     File file = new File("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\files\\" + packet[1]);
-                                    FileInputStream fis = new FileInputStream("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\files\\" + packet[1]);
+
+                                    //Read File Contents into contents array
+                                    long fileLength = file.length();
+                                    textArea1.appendText("[Server] Uploading File: " + packet[1] + " (" + fileLength + " bytes), to " + packet[0] + "\n");
+                                    privateMsg("Server:" + packet[1] + ":File:Download:" + String.valueOf(fileLength), packet[0], packet[0]);
+
+                                    //Specify the file
+                                    FileInputStream fis = new FileInputStream(file);
                                     BufferedInputStream bis = new BufferedInputStream(fis);
 
                                     //Get socket's output stream
                                     OutputStream os = socket.getOutputStream();
 
                                     //Read File Contents into contents array
-                                    long fileLength = file.length();
                                     long current = 0;
 
-                                    System.out.println(String.valueOf(fileLength));
-                                    PrintWriter writer = clientOutputStreams.get(users.indexOf(packet[0]));
-                                    writer.println(String.valueOf(fileLength));
-                                    writer.println("\n");
-                                    writer.flush();
-
+                                    long start = System.nanoTime();
                                     while (current != fileLength) {
                                         int size = 10000;
                                         if (fileLength - current >= size)
@@ -266,12 +264,10 @@ public class Server extends Application {
                                         textArea1.appendText("[Server] Sending file ... " + (current * 100) / fileLength + "% complete!\n");
                                     }
 
-                                    writer.println("Go");
-
+                                    os.flush();
                                     bis.close();
                                     fis.close();
                                     textArea1.appendText("[Server] Uploading Complete\n");
-
                                     break;
                                 default:
                                     textArea1.appendText("[Server] Can't read FileRequest Type.\n");

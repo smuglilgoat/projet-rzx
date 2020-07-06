@@ -287,32 +287,6 @@ public class Chat extends Application {
         writer.flush();
 
         chatArea.appendText("[Client] Downloading file : " + file.getName() + "\n");
-
-        File directory = new File("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\Clientfiles\\");
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-
-        byte[] contents = new byte[10000];
-
-        //Initialize the FileOutputStream to the output file's full path.
-        FileOutputStream fos = new FileOutputStream("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\Clientfiles\\" + file.getName());
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        InputStream is = socket.getInputStream();
-
-        //No of bytes read in one read() call
-        int bytesRead = 0;
-
-        do {
-            bytesRead = is.read(contents);
-            chatArea.appendText("[Server] Read " + bytesRead + " bytes\n");
-            bos.write(contents, 0, bytesRead);
-        } while (bytesRead == 10000);
-
-        bos.flush();
-        bos.close();
-        fos.close();
-        chatArea.appendText("[Client] Downloading Complete\n");
     }
 
     public class isReader implements Runnable {
@@ -365,6 +339,37 @@ public class Chat extends Application {
                                     ObservableList<String> filesList = FXCollections.observableList(list2);
                                     fileList.setItems(filesList);
                                     fileList.refresh();
+                                    break;
+                                case "Download":
+                                    chatArea.appendText("[Client] Receiving: " + packet[4] + " bytes from the Server for the file: " + packet[1] + "\n");
+
+                                    File directory = new File("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\Clientfiles\\");
+                                    if (!directory.exists()) {
+                                        directory.mkdir();
+                                    }
+
+                                    byte[] contents = new byte[10000];
+
+                                    //Initialize the FileOutputStream to the output file's full path.
+                                    FileOutputStream fos = new FileOutputStream("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\Clientfiles\\" + packet[1]);
+                                    BufferedOutputStream bos = new BufferedOutputStream(fos);
+                                    InputStream is = socket.getInputStream();
+
+                                    //No of bytes read in one read() call
+                                    int bytesRead = 0;
+                                    long bytesLeft = Long.parseLong(packet[4]);
+
+                                    do {
+                                        bytesRead = is.read(contents);
+                                        bytesLeft -= bytesRead;
+                                        chatArea.appendText("[Client] Read " + bytesRead + " bytes\n");
+                                        bos.write(contents, 0, bytesRead);
+                                    } while (bytesLeft > 0);
+
+                                    bos.flush();
+                                    bos.close();
+                                    fos.close();
+                                    chatArea.appendText("[Client] Succefully Downloaded file: " + packet[1] + " to " + directory.getPath());
                                     break;
                                 default:
                                     chatArea.appendText("[Client] Can't read FileRequest Type.\n");
