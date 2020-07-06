@@ -19,6 +19,7 @@ public class Server extends Application {
 
     ArrayList<PrintWriter> clientOutputStreams = new ArrayList<>();
     ArrayList<String> users = new ArrayList<>();
+    ArrayList<String> files = new ArrayList<String>();
 
     @FXML
     private TextArea textArea1;
@@ -35,14 +36,9 @@ public class Server extends Application {
 
     @FXML
     void onButtonClose(ActionEvent event) {
-        try {
-            publicMsg("[Server]: Closing Server. All users will be disconnected:Chat");
-            textArea1.appendText("[Server] Closing the Server in 5 sec...\n");
-            Thread.sleep(1000);
-            System.exit(0);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
+        publicMsg("[Server]: Closing Server. All users will be disconnected:Chat");
+        textArea1.appendText("[Server] Closing the Server in 5 sec...\n");
+        System.exit(0);
     }
 
     @FXML
@@ -156,6 +152,8 @@ public class Server extends Application {
         public void run() {
             String msg;
             String[] packet;
+            StringBuilder stringBuilder;
+            String finalString;
 
             try {
                 while ((msg = reader.readLine()) != null) {
@@ -176,32 +174,71 @@ public class Server extends Application {
                             privateMsg(msg, packet[3], packet[0]);
                             break;
                         case "Request":
-                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder = new StringBuilder();
                             for (String u : users) {
                                 stringBuilder.append(u).append("/");
                             }
-                            String finalString = packet[0] + ":" + stringBuilder.toString() + ":" + "Request";
+                            finalString = packet[0] + ":" + stringBuilder.toString() + ":" + "Request";
                             privateMsg(finalString, packet[0], packet[0]);
                             break;
                         case "File":
-                            String fileName = packet[1];
-                            textArea1.appendText("[Server] Downloading file : " + fileName + " from {" + packet[0] + "}\n");
+                            switch (packet[3]) {
+                                case "Upload":
+                                    String fileName = packet[1];
+                                    textArea1.appendText("[Server] Downloading file : " + fileName + " from {" + packet[0] + "}\n");
 
-                            int m;
-                            File directory = new File("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx");
-                            int size = 9022386;
-                            byte[] data = new byte[size];
-                            File fc = new File(directory, fileName);
-                            FileOutputStream fileOut = new FileOutputStream(fc);
-                            DataOutputStream dataOut = new DataOutputStream(fileOut);
+                                    int m;
+                                    File directory = new File("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\files");
+                                    if (!directory.exists()) {
+                                        directory.mkdir();
+                                    }
+                                    int size = 9022386;
+                                    byte[] data = new byte[size];
+                                    File fc = new File(directory, fileName);
+                                    FileOutputStream fileOut = new FileOutputStream(fc);
+                                    DataOutputStream dataOut = new DataOutputStream(fileOut);
 
-                            m = socket.getInputStream().read(data, 0, data.length);
-                            dataOut.write(data, 0, m);
-                            dataOut.flush();
-                            textArea1.appendText("[Server] Downloading Complete\n");
+                                    m = socket.getInputStream().read(data, 0, data.length);
+                                    dataOut.write(data, 0, m);
+                                    dataOut.flush();
+                                    textArea1.appendText("[Server] Downloading Complete\n");
+                                    files.add(packet[1]);
 
-                            fileOut.close();
-                            dataOut.close();
+                                    fileOut.close();
+                                    dataOut.close();
+
+                                    publicMsg("[Server]: New File Uploaded:Chat");
+                                    stringBuilder = new StringBuilder();
+                                    for (String u : files) {
+                                        stringBuilder.append(u).append("/");
+                                    }
+                                    finalString = packet[0] + ":" + stringBuilder.toString() + ":" + "File:List";
+                                    privateMsg(finalString, packet[0], packet[0]);
+                                    break;
+                                case "List":
+                                    stringBuilder = new StringBuilder();
+                                    for (String u : files) {
+                                        stringBuilder.append(u).append("/");
+                                    }
+                                    finalString = packet[0] + ":" + stringBuilder.toString() + ":" + "File:List";
+                                    privateMsg(finalString, packet[0], packet[0]);
+                                    break;
+                                case "Download":
+                                    FileInputStream file = new FileInputStream("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\files\\" + packet[1]);
+                                    BufferedInputStream bis = new BufferedInputStream(file);
+                                    ;
+
+                                    textArea1.appendText("[Server] Uploading File: " + packet[1] + ", to " + packet[0] + "\n");
+                                    sendBytes(bis, socket.getOutputStream());
+                                    textArea1.appendText("[Server] Uploading Complete\n");
+
+                                    bis.close();
+                                    file.close();
+                                    break;
+                                default:
+                                    textArea1.appendText("[Server] Can't read FileRequest Type.\n");
+                                    break;
+                            }
                             break;
                         default:
                             textArea1.appendText("[Server] Decoding Error: UnknownRequestType");
@@ -211,7 +248,16 @@ public class Server extends Application {
                 }
             } catch (Exception ex) {
                 textArea1.appendText("[Server] Connection Error: HostClientLost\n");
+                ex.printStackTrace();
             }
+        }
+
+        private void sendBytes(BufferedInputStream in, OutputStream out) throws Exception {
+            int size = 9022386;
+            byte[] data = new byte[size];
+            int c = in.read(data, 0, data.length);
+            out.write(data, 0, c);
+            out.flush();
         }
     }
 

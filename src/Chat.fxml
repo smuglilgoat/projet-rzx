@@ -21,7 +21,7 @@
                         <Insets left="10.0" top="10.0"/>
                      </HBox.margin>
                      <image>
-                        <Image url="@images/output-onlinepngtools.png" />
+                        <Image url="@images/output-onlinepngtools.png"/>
                      </image>
                   </ImageView>
                   <ImageView fx:id="closeButton" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#closeWindow" pickOnBounds="true" preserveRatio="true">
@@ -29,24 +29,24 @@
                         <Insets left="50.0" top="8.0" />
                      </HBox.margin>
                      <image>
-                        <Image url="@images/icons8-delete-24%20(3).png" />
+                        <Image url="@images/icons8-delete-24%20(3).png"/>
                      </image>
                   </ImageView>
                </children>
                <padding>
-                  <Insets top="3.0" />
+                  <Insets top="3.0"/>
                </padding>
             </HBox>
-            <ImageView fitHeight="25.0" fitWidth="20.0" layoutX="14.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/icons8_undo_26px.png" />
-               </image>
-            </ImageView>
-            <Label layoutX="43.0" layoutY="10.0" text="Disconnect" textFill="#f2f2f2">
-               <font>
-                  <Font name="Century Gothic" size="16.0" />
-               </font>
-            </Label>
+            <JFXButton fx:id="disconnectButton" layoutY="-4.0" onMouseClicked="#onDisconnectButton" prefHeight="48.0"
+                       prefWidth="116.0" text="Disconnect" textFill="WHITE">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/icons8_undo_26px.png"/>
+                     </image>
+                  </ImageView>
+               </graphic>
+            </JFXButton>
          </children>
       </Pane>
       <AnchorPane layoutY="38.0" prefHeight="562.0" prefWidth="250.0" style="-fx-background-color: #202020;">
@@ -106,10 +106,10 @@
                   </JFXButton>
                </children>
             </AnchorPane>
-            <JFXScrollPane layoutX="11.0" layoutY="12.0" prefHeight="476.0" prefWidth="752.0"
-                           AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="10.0">
+            <JFXScrollPane layoutX="11.0" layoutY="12.0" prefHeight="476.0" prefWidth="532.0"
+                           AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="231.0" AnchorPane.topAnchor="10.0">
                <children>
-                  <JFXTextArea fx:id="chatArea" prefHeight="476.0" prefWidth="672.0"
+                  <JFXTextArea fx:id="chatArea" prefHeight="476.0" prefWidth="496.0"
                                style="-fx-background-color: #34373C; -fx-text-fill: #f2f2f2;">
                      <font>
                         <Font name="Microsoft Sans Serif" size="12.0"/>
@@ -117,6 +117,11 @@
                   </JFXTextArea>
                </children>
             </JFXScrollPane>
+            <JFXListView fx:id="fileList" layoutX="558.0" layoutY="10.0" onMouseClicked="#onFileList" prefHeight="427.0"
+                         prefWidth="200.0" style="-fx-background-color: #34373C;"/>
+            <JFXButton fx:id="downloadButton" disable="true" layoutX="558.0" layoutY="448.0"
+                       onMouseClicked="#onDownloadButton" prefHeight="38.0" prefWidth="200.0" text="Download"
+                       textFill="WHITE"/>
          </children>
       </AnchorPane>
    </children>

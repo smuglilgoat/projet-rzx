@@ -33,36 +33,35 @@ public class Chat extends Application {
 
     public String[] loginCreds;
     ArrayList<String> users = new ArrayList<String>();
+    ArrayList<String> files = new ArrayList<String>();
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     Socket socket;
     BufferedReader reader;
     PrintWriter writer;
     Thread thread;
 
-    private double xOffset = 0;
-    private double yOffset = 0;
-
     @FXML
     private ImageView miniButton;
-
     @FXML
     private ImageView closeButton;
-
     @FXML
     private Label usernameLabel;
-
     @FXML
     private JFXListView<String> userList;
-
     @FXML
     private JFXTextField msgField;
-
     @FXML
     private JFXButton sendButton;
-
+    @FXML
+    private JFXButton disconnectButton;
+    @FXML
+    private JFXListView<String> fileList;
+    @FXML
+    private JFXButton downloadButton;
     @FXML
     private JFXButton uploadButton;
-
     @FXML
     private JFXTextArea chatArea;
 
@@ -78,6 +77,29 @@ public class Chat extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    @FXML
+    void onDisconnectButton(MouseEvent event) throws IOException {
+        Disconnect();
+        closeWindow();
+    }
+
+    @FXML
+    void onDownloadButton(MouseEvent event) throws Exception {
+        File directory = new File("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\Clientfiles");
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+
+        File file = new File(directory, fileList.getSelectionModel().getSelectedItem());
+        downloadFile(file);
+        downloadButton.setDisable(true);
+    }
+
+    @FXML
+    void onFileList(MouseEvent event) {
+        downloadButton.setDisable(false);
     }
 
     @FXML
@@ -226,15 +248,34 @@ public class Chat extends Application {
     }
 
     public void uploadFile(File file) throws Exception {
-        writer.println(loginCreds[0] + ":" + file.getName() + ":File");
+        writer.println(loginCreds[0] + ":" + file.getName() + ":File:Upload");
         writer.flush();
 
         FileInputStream fileIs = new FileInputStream(file.getPath());
         BufferedInputStream bis = new BufferedInputStream(fileIs);
+
         sendBytes(bis, socket.getOutputStream());
 
         bis.close();
         fileIs.close();
+    }
+
+    public void downloadFile(File file) throws Exception {
+        chatArea.appendText("[Client] Downloading file : " + file.getName() + "\n");
+
+        int m;
+        int size = 9022386;
+        byte[] data = new byte[size];
+        FileOutputStream fileOut = new FileOutputStream(file);
+        DataOutputStream dataOut = new DataOutputStream(fileOut);
+
+        m = socket.getInputStream().read(data, 0, data.length);
+        dataOut.write(data, 0, m);
+        dataOut.flush();
+        chatArea.appendText("[Client] Downloading Complete\n");
+
+        fileOut.close();
+        dataOut.close();
     }
 
     public class isReader implements Runnable {
@@ -243,9 +284,12 @@ public class Chat extends Application {
         public void run() {
             String[] packet;
             String stream;
+            StringBuilder stringBuilder;
+            String finalString;
 
             try {
                 while ((stream = reader.readLine()) != null) {
+                    System.out.println(stream);
                     packet = stream.split(":");
 
                     switch (packet[2]) {
@@ -275,6 +319,21 @@ public class Chat extends Application {
                             userList.setItems(usersList);
                             userList.refresh();
                             break;
+                        case "File":
+                            switch (packet[3]) {
+                                case "List":
+                                    String[] files = packet[1].split("/");
+                                    List<String> list2 = new ArrayList<String>();
+                                    Collections.addAll(list2, files);
+                                    ObservableList<String> filesList = FXCollections.observableList(list2);
+                                    fileList.setItems(filesList);
+                                    fileList.refresh();
+                                    break;
+                                default:
+                                    chatArea.appendText("[Client] Can't read FileRequest Type.\n");
+                                    break;
+                            }
+                            break;
                         default:
                             chatArea.appendText("[Client] Decoding Error: UnknownRequestType\n");
                             System.out.println(Arrays.toString(packet));
@@ -285,6 +344,9 @@ public class Chat extends Application {
                 ex.printStackTrace();
             }
         }
+
+
     }
+
 
 }
