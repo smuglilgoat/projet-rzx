@@ -182,7 +182,6 @@ public class Chat extends Application {
         reader.close();
         writer.close();
         socket.close();
-        thread.interrupt();
     }
 
     public void initConnection() {
@@ -251,31 +250,69 @@ public class Chat extends Application {
         writer.println(loginCreds[0] + ":" + file.getName() + ":File:Upload");
         writer.flush();
 
-        FileInputStream fileIs = new FileInputStream(file.getPath());
-        BufferedInputStream bis = new BufferedInputStream(fileIs);
+        //Specify the file
+        FileInputStream fis = new FileInputStream(file);
+        BufferedInputStream bis = new BufferedInputStream(fis);
 
-        sendBytes(bis, socket.getOutputStream());
+        //Get socket's output stream
+        OutputStream os = socket.getOutputStream();
 
+        //Read File Contents into contents array
+        byte[] contents;
+        long fileLength = file.length();
+        long current = 0;
+
+        long start = System.nanoTime();
+        while (current != fileLength) {
+            int size = 10000;
+            if (fileLength - current >= size)
+                current += size;
+            else {
+                size = (int) (fileLength - current);
+                current = fileLength;
+            }
+            contents = new byte[size];
+            bis.read(contents, 0, size);
+            os.write(contents);
+            chatArea.appendText("[Client] Sending file ... " + (current * 100) / fileLength + "% complete!\n");
+        }
+
+        os.flush();
         bis.close();
-        fileIs.close();
+        fis.close();
     }
 
     public void downloadFile(File file) throws Exception {
+        writer.println(loginCreds[0] + ":" + file.getName() + ":File:Download");
+        writer.flush();
+
         chatArea.appendText("[Client] Downloading file : " + file.getName() + "\n");
 
-        int m;
-        int size = 9022386;
-        byte[] data = new byte[size];
-        FileOutputStream fileOut = new FileOutputStream(file);
-        DataOutputStream dataOut = new DataOutputStream(fileOut);
+        File directory = new File("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\Clientfiles\\");
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
 
-        m = socket.getInputStream().read(data, 0, data.length);
-        dataOut.write(data, 0, m);
-        dataOut.flush();
+        byte[] contents = new byte[10000];
+
+        //Initialize the FileOutputStream to the output file's full path.
+        FileOutputStream fos = new FileOutputStream("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\Clientfiles\\" + file.getName());
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        InputStream is = socket.getInputStream();
+
+        //No of bytes read in one read() call
+        int bytesRead = 0;
+
+        do {
+            bytesRead = is.read(contents);
+            chatArea.appendText("[Server] Read " + bytesRead + " bytes\n");
+            bos.write(contents, 0, bytesRead);
+        } while (bytesRead == 10000);
+
+        bos.flush();
+        bos.close();
+        fos.close();
         chatArea.appendText("[Client] Downloading Complete\n");
-
-        fileOut.close();
-        dataOut.close();
     }
 
     public class isReader implements Runnable {
