@@ -250,14 +250,11 @@ public class Chat extends Application {
         writer.println(loginCreds[0] + ":" + file.getName() + ":File:Upload");
         writer.flush();
 
-        //Specify the file
         FileInputStream fis = new FileInputStream(file);
         BufferedInputStream bis = new BufferedInputStream(fis);
 
-        //Get socket's output stream
         OutputStream os = socket.getOutputStream();
 
-        //Read File Contents into contents array
         byte[] contents;
         long fileLength = file.length();
         long current = 0;
@@ -350,12 +347,10 @@ public class Chat extends Application {
 
                                     byte[] contents = new byte[10000];
 
-                                    //Initialize the FileOutputStream to the output file's full path.
                                     FileOutputStream fos = new FileOutputStream("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\Clientfiles\\" + packet[1]);
                                     BufferedOutputStream bos = new BufferedOutputStream(fos);
                                     InputStream is = socket.getInputStream();
 
-                                    //No of bytes read in one read() call
                                     int bytesRead = 0;
                                     long bytesLeft = Long.parseLong(packet[4]);
 
@@ -369,7 +364,7 @@ public class Chat extends Application {
                                     bos.flush();
                                     bos.close();
                                     fos.close();
-                                    chatArea.appendText("[Client] Succefully Downloaded file: " + packet[1] + " to " + directory.getPath());
+                                    chatArea.appendText("[Client] Succefully Downloaded file: " + packet[1] + " to " + directory.getPath() + "\n");
                                     break;
                                 default:
                                     chatArea.appendText("[Client] Can't read FileRequest Type.\n");

@@ -195,12 +195,10 @@ public class Server extends Application {
 
                                     contents = new byte[10000];
 
-                                    //Initialize the FileOutputStream to the output file's full path.
                                     FileOutputStream fos = new FileOutputStream("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\files\\" + packet[1]);
                                     BufferedOutputStream bos = new BufferedOutputStream(fos);
                                     InputStream is = socket.getInputStream();
 
-                                    //No of bytes read in one read() call
                                     int bytesRead = 0;
 
                                     do {
@@ -220,7 +218,7 @@ public class Server extends Application {
                                         stringBuilder.append(u).append("/");
                                     }
                                     finalString = packet[0] + ":" + stringBuilder.toString() + ":" + "File:List";
-                                    privateMsg(finalString, packet[0], packet[0]);
+                                    publicMsg(finalString);
                                     break;
                                 case "List":
                                     stringBuilder = new StringBuilder();
@@ -231,22 +229,17 @@ public class Server extends Application {
                                     privateMsg(finalString, packet[0], packet[0]);
                                     break;
                                 case "Download":
-                                    //Specify the file
                                     File file = new File("E:\\Documents\\Code\\project-rzx\\out\\production\\project-rzx\\files\\" + packet[1]);
 
-                                    //Read File Contents into contents array
                                     long fileLength = file.length();
                                     textArea1.appendText("[Server] Uploading File: " + packet[1] + " (" + fileLength + " bytes), to " + packet[0] + "\n");
                                     privateMsg("Server:" + packet[1] + ":File:Download:" + String.valueOf(fileLength), packet[0], packet[0]);
 
-                                    //Specify the file
                                     FileInputStream fis = new FileInputStream(file);
                                     BufferedInputStream bis = new BufferedInputStream(fis);
 
-                                    //Get socket's output stream
                                     OutputStream os = socket.getOutputStream();
 
-                                    //Read File Contents into contents array
                                     long current = 0;
 
                                     long start = System.nanoTime();
@@ -281,7 +274,6 @@ public class Server extends Application {
                     }
                 }
             } catch (Exception ex) {
-                textArea1.appendText("[Server] Connection Error: HostClientLost\n");
                 ex.printStackTrace();
             }
         }

@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/project_rzx_jar</output-path>
     <root id="archive" name="project-rzx.jar">
       <element id="module-output" name="project-rzx" />
+      <element id="extracted-dir" path="C:/Program Files/AdoptOpenJDK/javafx-sdk-11.0.2/jfoenix-9.0.10.jar" path-in-jar="/" />
       <element id="extracted-dir" path="C:/Program Files/AdoptOpenJDK/javafx-sdk-11.0.2/lib/src.zip" path-in-jar="/" />
       <element id="extracted-dir" path="C:/Program Files/AdoptOpenJDK/javafx-sdk-11.0.2/lib/javafx-swt.jar" path-in-jar="/" />
       <element id="extracted-dir" path="C:/Program Files/AdoptOpenJDK/javafx-sdk-11.0.2/lib/javafx.web.jar" path-in-jar="/" />
